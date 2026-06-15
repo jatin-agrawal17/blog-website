@@ -64,10 +64,12 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "blogs.context_processors.get_categories",
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = "blog_main.wsgi.application"
 
