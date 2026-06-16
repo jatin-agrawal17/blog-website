@@ -1,0 +1,43 @@
+from django.shortcuts import render,redirect
+from blogs.models import Category,Blog
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from dashboards.forms import CategoryForm
+
+# Create your views here.
+@login_required(login_url='login')
+def dashboard(request):
+
+    allowed = request.user.groups.filter(
+        name__in=['Editor', 'Manager']
+    ).exists()
+
+    if not allowed and not request.user.is_superuser:
+        return HttpResponseForbidden("Access Denied")
+
+    category_count = Category.objects.count()
+    blogs_count = Blog.objects.count()
+
+    context = {
+        'category_count': category_count,
+        'blogs_count': blogs_count
+    }
+
+    return render(request, 'dashboard/dashboard.html', context)
+
+
+
+def categories(request):
+    return render(request, 'dashboard/categories.html')
+
+def add_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('categories')
+    form  = CategoryForm()
+    context = {
+        'form':form
+    }
+    return render(request, 'dashboard/add_category.html', context)
