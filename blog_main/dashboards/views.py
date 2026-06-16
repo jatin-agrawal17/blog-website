@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from blogs.models import Category,Blog
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from dashboards.forms import CategoryForm,BlogForm
 from django.template.defaultfilters import slugify
@@ -116,3 +117,11 @@ def delete_posts(request,pk):
     post = get_object_or_404(Blog,pk =pk)
     post.delete()
     return redirect('posts')
+
+
+def users(request):
+    users = User.objects.all()
+    context = {
+        'users':users
+    }
+    return render(request, 'dashboard/users.html', context)
