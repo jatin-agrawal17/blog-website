@@ -32,4 +32,7 @@ urlpatterns = [
     path('login/', views.login, name = 'login'),
     path('logout/', views.logout, name = 'logout'),
     path('dashboard/', include('dashboards.urls')),
+
+    path('account/', include('account.urls')),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

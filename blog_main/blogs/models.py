@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from audit_logger.decorators import audit_model
+from django_ckeditor_5.fields import CKEditor5Field
 
 # Create your models here.
 @audit_model
@@ -29,7 +30,10 @@ class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     featured_image = models.ImageField(upload_to='uploads/%Y/%m/%d')
     short_description = models.TextField(max_length=500)
-    blog_body = models.TextField(max_length=2000)
+    blog_body = CKEditor5Field(
+    'Content',
+    config_name='extends'
+)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Draft")
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -38,3 +42,22 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+
+
+
+# dummy
+
+# 
+
+# class DemoBlog(models.Model):
+#     title = models.CharField(max_length=100)
+
+#     content = CKEditor5Field(
+#         'Content',
+#         config_name='extends'
+#     )
+
+#     def __str__(self):
+#         return self.title

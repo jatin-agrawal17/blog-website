@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <h2>My Profile</h2>
+
+        <a href="{% url 'add_blog' %}"
+            class="btn btn-success">
+            <i class="fa fa-plus"></i> Add Blog
+        </a>
+
+        <a href="{% url 'edit_profile' %}"
+           class="btn btn-warning text-dark float-right mb-3">
+            Edit Profile
+        </a>
+
+        <table class="table table-bordered">
+
+            <tbody>
+
+                <tr>
+                    <th width="20%">Profile Image</th>
+                    <td>
+                        <img src="{{ profile.profile_image.url }}"
+                             width="120"
+                             height="120"
+                             class="rounded-circle">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Username</th>
+                    <td>{{ request.user.username }}</td>
+                </tr>
+
+                <tr>
+                    <th>Email</th>
+                    <td>{{ request.user.email }}</td>
+                </tr>
+
+                <tr>
+                    <th>Bio</th>
+                    <td>{{ profile.bio }}</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <hr>
+
+                <div class="row mb-4">
+
+            <div class="col-md-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h3>{{ total_blogs }}</h3>
+                        <p class="mb-0">Total Blogs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card text-center border-success">
+                    <div class="card-body">
+                        <h3>{{ published_blogs }}</h3>
+                        <p class="mb-0">Published Blogs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card text-center border-warning">
+                    <div class="card-body">
+                        <h3>{{ draft_blogs }}</h3>
+                        <p class="mb-0">Draft Blogs</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <h2>My Blogs</h2>
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Featured</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for blog in blogs %}
+
+                <tr>
+
+                    <td>{{ forloop.counter }}</td>
+
+                    <td>{{ blog.title }}</td>
+
+                    <td>{{ blog.category }}</td>
+
+                    <td>{{ blog.status }}</td>
+
+                    <td>
+                        {% if blog.is_featured %}
+                            <i class="fa fa-check text-success"></i>
+                        {% else %}
+                            <i class="fa fa-times text-danger"></i>
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <a href="{% url 'edit_blog' blog.id %}">
+                            <i class="fa fa-edit text-success"></i>
+                        </a>
+
+                        &emsp;
+
+                        <a href="{% url 'delete_blog' blog.id %}">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No blogs created yet.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

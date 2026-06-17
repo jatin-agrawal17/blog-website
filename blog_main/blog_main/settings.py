@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     "crispy_bootstrap4",
     "dashboards",
+    "account",
+    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +134,52 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+CKEDITOR_5_CONFIGS = {
+    'extends': {
+        'toolbar': [
+            'heading',
+            '|',
+
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+
+            '|',
+
+            'link',
+            'imageUpload',
+            'insertTable',
+
+            '|',
+
+            'bulletedList',
+            'numberedList',
+
+            '|',
+
+            'blockQuote',
+            'codeBlock',
+
+            '|',
+
+            'undo',
+            'redo',
+        ],
+
+        'image': {
+            'toolbar': [
+                'imageTextAlternative',
+                'toggleImageCaption',
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side',
+            ]
+        }
+    }
+}
+
+CKEDITOR_5_UPLOAD_PATH = "blog_images/"
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "any"
