@@ -44,20 +44,13 @@ class Blog(models.Model):
         return self.title
     
 
+@audit_model
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=250)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-
-
-# dummy
-
-# 
-
-# class DemoBlog(models.Model):
-#     title = models.CharField(max_length=100)
-
-#     content = CKEditor5Field(
-#         'Content',
-#         config_name='extends'
-#     )
-
-#     def __str__(self):
-#         return self.title
+    def __str__(self):
+        return self.comment

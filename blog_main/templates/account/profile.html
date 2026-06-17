@@ -123,6 +123,12 @@
 
                     <td>
 
+                        <a href="{% url 'blogs' blog.slug %}">
+                            <i class="fa fa-eye text-primary"></i>
+                        </a>
+
+                        &emsp;
+
                         <a href="{% url 'edit_blog' blog.id %}">
                             <i class="fa fa-edit text-success"></i>
                         </a>
