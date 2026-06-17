@@ -3,20 +3,17 @@ from blogs.models import Category,Blog
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
-from dashboards.forms import CategoryForm,BlogForm
+from dashboards.forms import CategoryForm,BlogForm,AddUserForm,EditUserForm
 from django.template.defaultfilters import slugify
+from dashboards.permissions import (
+    editor_or_manager_required,
+    manager_required
+)
 
 # Create your views here.
 @login_required(login_url='login')
+@editor_or_manager_required
 def dashboard(request):
-
-    allowed = request.user.groups.filter(
-        name__in=['Editor', 'Manager']
-    ).exists()
-
-    if not allowed and not request.user.is_superuser:
-        return HttpResponseForbidden("Access Denied")
-
     category_count = Category.objects.count()
     blogs_count = Blog.objects.count()
 
@@ -28,11 +25,16 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
-
+@login_required(login_url='login')
+@editor_or_manager_required
 def categories(request):
     return render(request, 'dashboard/categories.html')
 
+
+@login_required(login_url='login')
+@editor_or_manager_required
 def add_category(request):
+    
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -45,6 +47,8 @@ def add_category(request):
     return render(request, 'dashboard/add_category.html', context)
 
 
+@login_required(login_url='login')
+@editor_or_manager_required
 def edit_category(request,pk):
     category = get_object_or_404(Category, pk = pk)
     if request.method == 'POST':
@@ -59,12 +63,19 @@ def edit_category(request,pk):
     }
     return render(request, 'dashboard/edit_category.html', context)
 
+
+@login_required(login_url='login')
+@editor_or_manager_required
 def delete_category(request,pk):
     category = get_object_or_404(Category,pk =pk)
     category.delete()
     return redirect('categories')
 
-def posts(request):
+
+
+@login_required(login_url='login')
+@editor_or_manager_required
+def posts(request): 
     posts = Blog.objects.all()
     context = {
         'posts':posts
@@ -72,7 +83,10 @@ def posts(request):
     return render(request, 'dashboard/posts.html', context)
 
 
+@login_required(login_url='login')
+@editor_or_manager_required
 def add_posts(request):
+    
     if request.method == 'POST':
         print(request.FILES)
         form = BlogForm(request.POST,request.FILES)
@@ -95,7 +109,9 @@ def add_posts(request):
     return render(request, 'dashboard/add_post.html',context)
 
 
-def edit_posts(request,pk):
+@login_required(login_url='login')
+@editor_or_manager_required
+def edit_posts(request,pk):  
     post = get_object_or_404(Blog,pk=pk)
     if request.method == 'POST':
         form = BlogForm(request.POST, request.FILES, instance=post)
@@ -113,15 +129,66 @@ def edit_posts(request,pk):
     return render(request, 'dashboard/edit_posts.html',context)
 
 
-def delete_posts(request,pk):
+@login_required(login_url='login')
+@editor_or_manager_required
+def delete_posts(request,pk):   
     post = get_object_or_404(Blog,pk =pk)
     post.delete()
     return redirect('posts')
 
 
+@login_required(login_url='login')
+@manager_required
 def users(request):
     users = User.objects.all()
     context = {
         'users':users
     }
     return render(request, 'dashboard/users.html', context)
+
+
+@login_required(login_url='login')
+@manager_required
+def add_user(request):
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            print(form.errors)
+    form = AddUserForm()
+    context = {
+        'form':form
+    }
+    return render(request,'dashboard/add_user.html', context)
+
+
+@login_required(login_url='login')
+@manager_required
+def edit_user(request,pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+    form = EditUserForm(instance=user)
+    context = {
+        'user':user,
+        'form':form
+    }
+    return render(request, 'dashboard/edit_user.html',context)
+
+@login_required(login_url='login')
+@manager_required
+def delete_user(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if user == request.user:
+        return HttpResponseForbidden("You cannot delete your own account.")
+    
+    user.delete()
+
+    return redirect('users')
+    
